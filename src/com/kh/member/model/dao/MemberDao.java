@@ -2,7 +2,6 @@ package com.kh.member.model.dao;
 
 import static com.kh.common.JdbcTemplate.close;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -109,7 +108,8 @@ public class MemberDao {
 	public List<Member> selectAllMember(Connection conn) {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		String sql = "select * from member order by reg_date desc";
+		String sql2 = "select * from member order by reg_date desc";
+		String sql = prop.getProperty("selectAllMember");
 		List<Member> list = new ArrayList<>();
 
 		try {
@@ -146,9 +146,10 @@ public class MemberDao {
 	public int deleteMember(Connection conn, String id) {
 		PreparedStatement pstmt = null;
 		int result = 0;
+		String sql2 = "delete from member where id = ?";
+		String sql = prop.getProperty("deleteMember");
 
 		try {
-			String sql = "delete from member where id = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			result = pstmt.executeUpdate();
@@ -164,7 +165,8 @@ public class MemberDao {
 	public List<MemberDel> selectAllMemberDel(Connection conn) {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		String sql = "select * from member_del order by del_date desc";
+		String sql2 = "select * from member_del order by del_date desc";
+		String sql = prop.getProperty("selectAllMemberDel");
 		List<MemberDel> list = new ArrayList<>();
 
 		try {
@@ -201,10 +203,11 @@ public class MemberDao {
 	public int updateMember(Connection conn, String id, String colName, String newValue) {
 		PreparedStatement pstmt = null;
 		int result = 0;
+		String sql2 = "update member set ! = ? where id = ?";
+		String sql = prop.getProperty("updateMember");
 
 		try {
-			String sql = "update member set # = ? where id = ?";
-			sql = sql.replace("#", colName);
+			sql = sql.replace("!", colName);
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, newValue);
 			pstmt.setString(2, id);
@@ -222,7 +225,8 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		Member member = null;
-		String sql = "select * from member where id = ?";
+		String sql2 = "select * from member where id = ?";
+		String sql = prop.getProperty("selectOneMember");
 
 		try {
 			pstmt = conn.prepareStatement(sql);

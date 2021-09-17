@@ -33,7 +33,6 @@ public class MemberController {
 		try {
 			list = memberService.selectMemberByName(name);
 		} catch (Exception e) {
-			e.printStackTrace();
 			System.err.println("관리자에게 문의하세요: " + e.getMessage());
 		}
 		return list;
