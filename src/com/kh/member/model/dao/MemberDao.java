@@ -105,11 +105,15 @@ public class MemberDao {
 		return list;
 	}
 
-	public List<Member> selectAllMember(Connection conn) {
+	public List<Member> selectAllMember(Connection conn, boolean isPresent) {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		String sql2 = "select * from member order by reg_date desc";
-		String sql = prop.getProperty("selectAllMember");
+		String sql = null;
+		if (isPresent)
+			sql = prop.getProperty("selectAllMember");
+		else
+			sql = prop.getProperty("selectAllMemberDel");
 		List<Member> list = new ArrayList<>();
 
 		try {
@@ -129,7 +133,9 @@ public class MemberDao {
 				member.setEmail(rset.getString("EMAIL"));
 				member.setAddress(rset.getString("ADDRESS"));
 				member.setRegDate(rset.getTimestamp("REG_DATE"));
-
+				member.setDelFlag(rset.getString("DEL_FLAG"));
+				member.setDelDate(rset.getTimestamp("DEL_DATE"));
+				
 				list.add(member);
 			}
 
@@ -160,44 +166,6 @@ public class MemberDao {
 		}
 
 		return result;
-	}
-
-	public List<MemberDel> selectAllMemberDel(Connection conn) {
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
-		String sql2 = "select * from member_del order by del_date desc";
-		String sql = prop.getProperty("selectAllMemberDel");
-		List<MemberDel> list = new ArrayList<>();
-
-		try {
-			// 1. PreparedStatment객체 생성 및 쿼리 완성
-			pstmt = conn.prepareStatement(sql);
-
-			// 2. 실행 및 ResultSet처리
-			rset = pstmt.executeQuery();
-			while (rset.next()) {
-				MemberDel member = new MemberDel();
-				// 컬럼명 대소문자 구분하지 않는다.
-				member.setId(rset.getString("ID"));
-				member.setName(rset.getString("NAME"));
-				member.setGender(rset.getString("GENDER"));
-				member.setBirthday(rset.getDate("BIRTHDAY"));
-				member.setEmail(rset.getString("EMAIL"));
-				member.setAddress(rset.getString("ADDRESS"));
-				member.setRegDate(rset.getTimestamp("REG_DATE"));
-				member.setDelDate(rset.getTimestamp("DEL_DATE"));
-
-				list.add(member);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			// 3. 자원반납(rset, pstmt)
-			close(rset);
-			close(pstmt);
-		}
-		return list;
 	}
 
 	public int updateMember(Connection conn, String id, String colName, String newValue) {

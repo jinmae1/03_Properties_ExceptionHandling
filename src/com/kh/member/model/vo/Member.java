@@ -4,17 +4,14 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
- * VO class (Value Object)
- * DTO class (Data Transfer Object)
- * Entity class
- * DO class (Domain Object)
- * Bean Class
+ * VO class (Value Object) DTO class (Data Transfer Object) Entity class DO
+ * class (Domain Object) Bean Class
  * 
  * VO객체는 DB테이블(entity)의 한행(record)과 대응한다.
  * 
  */
 public class Member {
-	
+
 	private String id;
 	private String name;
 	private String gender;
@@ -22,7 +19,9 @@ public class Member {
 	private String email;
 	private String address;
 	private Timestamp regDate;
-	
+	private String delFlag = "N";
+	private Timestamp delDate = null;
+
 	public Member() {
 		super();
 	}
@@ -95,10 +94,26 @@ public class Member {
 		this.regDate = regDate;
 	}
 
+	public String getDelFlag() {
+		return this.delFlag;
+	}
+
+	public void setDelFlag(String delFlag) {
+		this.delFlag = delFlag;
+	}
+
+	public Timestamp getDelDate() {
+		return this.delDate;
+	}
+
+	public void setDelDate(Timestamp delDate) {
+		this.delDate = delDate;
+	}
+
 	@Override
 	public String toString() {
-		return id + "\t" + name + "\t" + gender + "\t" + birthday + "\t"
-				+ email + "\t\t" + address + "\t" + regDate;
+		return id + "\t" + name + "\t" + gender + "\t" + birthday + "\t" + email + "\t\t" + address + "\t" + regDate
+				+ "\t" + delFlag + "\t" + delDate;
 	}
-	
+
 }

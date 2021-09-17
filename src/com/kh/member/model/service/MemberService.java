@@ -51,9 +51,9 @@ public class MemberService {
 		return list;
 	}
 
-	public List<Member> selectAllMember() {
+	public List<Member> selectAllMember(boolean isPresent) {
 		Connection conn = getConnection();
-		List<Member> list = memberDao.selectAllMember(conn);
+		List<Member> list = memberDao.selectAllMember(conn, isPresent);
 		close(conn);
 		return list;
 	}
@@ -69,12 +69,12 @@ public class MemberService {
 		return result;
 	}
 
-	public List<MemberDel> selectAllMemberDel() {
-		Connection conn = getConnection();
-		List<MemberDel> list = memberDao.selectAllMemberDel(conn);
-		close(conn);
-		return list;
-	}
+	// public List<Member> selectAllMemberDel() {
+	// Connection conn = getConnection();
+	// List<Member> list = memberDao.selectAllMember(conn);
+	// close(conn);
+	// return list;
+	// }
 
 	public Member selectOneMember(String id) {
 		Connection conn = getConnection();

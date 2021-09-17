@@ -5,7 +5,6 @@ import java.util.List;
 import com.kh.member.model.exception.MemberDataNotValidException;
 import com.kh.member.model.service.MemberService;
 import com.kh.member.model.vo.Member;
-import com.kh.member.model.vo.MemberDel;
 
 /**
  * 
@@ -38,9 +37,8 @@ public class MemberController {
 		return list;
 	}
 
-	public List<Member> selectAllMember() {
-		List<Member> list = memberService.selectAllMember();
-		return list;
+	public List<Member> selectAllMember(boolean isPresent) {
+		return memberService.selectAllMember(isPresent);
 	}
 
 	public int deleteMember(String id) {
@@ -51,9 +49,9 @@ public class MemberController {
 		return result;
 	}
 
-	public List<MemberDel> selectAllMemberDel() {
-		return memberService.selectAllMemberDel();
-	}
+	// public List<Member> selectAllMemberDel() {
+	// return memberService.selectAllMemberDel();
+	// }
 
 	public Member selectOneMember(String id) {
 		// 1. memberService에게 id와 일치하는 회원정보 조회 : 1행 - Member객체, 0행 - null
