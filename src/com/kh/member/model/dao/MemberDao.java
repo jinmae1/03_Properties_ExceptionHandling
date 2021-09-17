@@ -26,7 +26,6 @@ public class MemberDao {
 		final String sqlConfigPath = "resources/member-query.properties";
 		try {
 			prop.load(new FileReader(sqlConfigPath));
-			System.out.println("prop = " + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -52,9 +51,12 @@ public class MemberDao {
 
 		} catch (SQLException e) {
 			String message = "회원 가입 오류!";
-			if (e.getMessage().contains("STUDENT.CK_MEMBER_GENDER")) {
-				message += String.format("(성별은 M 또는 F값만 가능합니다. - %s)", member.getGender());
-				throw new MemberDataNotValidException(message, e);
+			String eMsg = e.getMessage();
+
+			eMsg = getConstraintsMsg(eMsg, member);
+			if (!eMsg.equals(e.getMessage())) {
+				throw new MemberDataNotValidException(message + " " + eMsg, e);
+
 			} else
 				throw new MemberException(message, e);
 		} finally {
@@ -63,6 +65,26 @@ public class MemberDao {
 		}
 
 		return result;
+	}
+
+	private String getConstraintsMsg(String msg, Member member) {
+		if (msg.contains("STUDENT.CK_TB_MEMBER_GENDER"))
+			msg += String.format("(성별은 M 또는 F값만 가능합니다. (입력값: %s))\n", member.getGender());
+		if (msg.contains("STUDENT.UQ_TB_MEMBER_EMAIL"))
+			msg += String.format("이메일이 중복됩니다. (입력값: %s))\n", member.getEmail());
+		if (msg.contains("value too large")) {
+			// ORA-12899: value too large for column "STUDENT"."TB_MEMBER"."NAME" (actual:
+			// 227, maximum: 100)
+			String limit = msg.substring(msg.lastIndexOf("actual") - 1);
+			String field = msg.substring(msg.lastIndexOf(".") + 1, msg.lastIndexOf("\"") + 1);
+
+			// msg += String.format("입력값이 너무 깁니다. (입력값: %s) 현재: %s(bytes), 제한 %s(bytes)",
+			// "","","");
+			msg += String.format("%s의 입력값이 너무 깁니다. %s", field, limit);
+
+		}
+		return msg;
+
 	}
 
 	public List<Member> selectMemberByName(Connection conn, String name) {
@@ -138,7 +160,7 @@ public class MemberDao {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new MemberException("회원 출력 오류(" + e.getMessage() + ")", e);
 		} finally {
 			// 3. 자원반납(rset, pstmt)
 			close(rset);
@@ -157,7 +179,7 @@ public class MemberDao {
 			pstmt.setString(1, id);
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new MemberException("회원 삭제 오류(" + e.getMessage() + ")", e);
 		} finally {
 			close(pstmt);
 		}
@@ -177,7 +199,15 @@ public class MemberDao {
 			pstmt.setString(2, id);
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			String message = "회원정보 변경 오류";
+			String eMsg = e.getMessage();
+			Member member = selectOneMember(conn, id);
+
+			eMsg = getConstraintsMsg(eMsg, member);
+			if (!eMsg.equals(e.getMessage())) {
+				throw new MemberDataNotValidException(message + " " + eMsg, e);
+			} else
+				throw new MemberException(message, e);
 		} finally {
 			close(pstmt);
 		}
@@ -206,7 +236,7 @@ public class MemberDao {
 				member = new Member(id, name, gender, birthday, email, address, regDate);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new MemberException("회원 출력 오류(" + e.getMessage() + ")", e);
 		} finally {
 			close(rset);
 			close(pstmt);

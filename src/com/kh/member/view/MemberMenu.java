@@ -35,7 +35,16 @@ public class MemberMenu {
 					printMemberList(memberController.selectMemberByName(inputName()));
 					break;
 				case "4":
-					System.out.println(memberController.insertMember(inputMember()) > 0 ? "회원가입 성공!" : "회원가입실패!");
+					Member member = null;
+					try {
+						member = inputMember();
+					} catch (Exception e) {
+						System.out.println("+++++++++++++");
+						System.out.println(e.getMessage() + "&&&&&&&");
+						System.out.println("+++++++++++++");
+						break;
+					}
+					System.out.println(memberController.insertMember(member) > 0 ? "회원가입 성공!" : "회원가입실패!");
 					break;
 				case "5":
 					updateMenu();
@@ -208,11 +217,20 @@ public class MemberMenu {
 	 * 
 	 * @return
 	 */
-	private Member inputMember() {
+	private Member inputMember() throws Exception {
+		String id = null;
+		boolean usrExists;
 		System.out.println("> 새 회원정보를 입력하세요.");
 
-		System.out.print("아이디 : ");
-		String id = sc.next();
+		do {
+			System.out.print("아이디 : ");
+			id = sc.next();
+			usrExists = userExists(id);
+
+			if (usrExists)
+				System.out.println("아이디가 이미 존재합니다.");
+
+		} while (usrExists);
 
 		System.out.print("이름 : ");
 		String name = sc.next();
@@ -221,13 +239,26 @@ public class MemberMenu {
 		String gender = String.valueOf(sc.next().toUpperCase().charAt(0));
 
 		// 사용자 입력값 -> java.util.Calendar -> java.sql.Date
-		System.out.print("생년월일(예: 19900909) : ");
-		String temp = sc.next();
-		int year = Integer.valueOf(temp.substring(0, 4));
-		int month = Integer.valueOf(temp.substring(4, 6)) - 1; // 0 ~ 11월
-		int date = Integer.valueOf(temp.substring(6, 8));
-		Calendar cal = new GregorianCalendar(year, month, date);
-		Date birthday = new Date(cal.getTimeInMillis());
+		int tries = 0;
+		Date birthday = null;
+		do {
+			try {
+				System.out.print("생년월일(예: 19900909) : ");
+				String temp = sc.next();
+				int year = Integer.valueOf(temp.substring(0, 4));
+				int month = Integer.valueOf(temp.substring(4, 6)) - 1; // 0 ~ 11월
+				int date = Integer.valueOf(temp.substring(6, 8));
+				Calendar cal = new GregorianCalendar(year, month, date);
+				birthday = new Date(cal.getTimeInMillis());
+				break;
+
+			} catch (NumberFormatException | IndexOutOfBoundsException e) {
+				System.out.println("날짜형식을 맞춰주세요(예: 19900909");
+				tries++;
+			}
+			if (tries == 3)
+				throw new Exception("입력 횟수를 초과하였습니다.");
+		} while (true);
 
 		System.out.print("이메일 : ");
 		String email = sc.next();
@@ -238,5 +269,15 @@ public class MemberMenu {
 
 		return new Member(id, name, gender, birthday, email, address, null);
 	}
+
+	private boolean userExists(String id) {
+		Member member = memberController.selectOneMember(id);
+		return member == null ? false : true;
+	}
+
+	private boolean userExists(Member member) {
+		return member == null ? false : true;
+	}
+
 
 }
