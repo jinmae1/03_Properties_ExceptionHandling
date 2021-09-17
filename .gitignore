@@ -70,6 +70,7 @@ local.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse
 
-lib/
+lib/*
+!lib/.gitkeep
 info.txt
 resources/datasource.properties
