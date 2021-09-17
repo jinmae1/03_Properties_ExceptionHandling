@@ -112,3 +112,9 @@ from
     user_tab_columns
 where
     table_name = 'TB_MEMBER';
+
+-- system 계정으로 해야 함 ---------
+select username, account_status, lock_date from dba_users;
+alter user STUDENT account unlock;
+commit;
+---------------------------------
