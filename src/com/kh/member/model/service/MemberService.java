@@ -68,13 +68,6 @@ public class MemberService {
 		return result;
 	}
 
-	// public List<Member> selectAllMemberDel() {
-	// Connection conn = getConnection();
-	// List<Member> list = memberDao.selectAllMember(conn);
-	// close(conn);
-	// return list;
-	// }
-
 	public Member selectOneMember(String id) {
 		Connection conn = getConnection();
 		Member member = memberDao.selectOneMember(conn, id);

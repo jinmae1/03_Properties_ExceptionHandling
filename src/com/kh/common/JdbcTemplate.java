@@ -1,12 +1,15 @@
 package com.kh.common;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOError;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.util.Properties;
 
 public class JdbcTemplate {
@@ -28,6 +31,11 @@ public class JdbcTemplate {
 			user = prop.getProperty("user");
 			password = prop.getProperty("password");
 
+			if (driverClass == null || url == null || user == null || password == null)
+				throw new NullPointerException("속성값이 없습니다. " + datasourceConfigPath + "를 확인하세요");
+
+		} catch (FileNotFoundException e) {
+			System.err.println("파일을 찾을 수 없습니다.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,6 +54,17 @@ public class JdbcTemplate {
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 			conn.setAutoCommit(false);
+		} catch (SQLRecoverableException e) {
+			System.err.println("DB서버의 주소를 확인해주세요");
+		} catch (SQLException e) {
+			if (e.getMessage().contains("username/password")) {
+				System.err.println(e.getMessage());
+				System.err.println("아이디/비밀번호를 확인해주세요");
+			}
+			if (e.getMessage().contains("locked")) {
+				System.err.println(e.getMessage());
+				System.err.println("계정이 잠겼습니다.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
