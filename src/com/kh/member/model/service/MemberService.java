@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.kh.member.model.dao.MemberDao;
 import com.kh.member.model.vo.Member;
-import com.kh.member.model.vo.MemberDel;
 
 /**
  * Service Class 업무로직 담당.

@@ -9,7 +9,6 @@ import java.util.Scanner;
 
 import com.kh.member.controller.MemberController;
 import com.kh.member.model.vo.Member;
-import com.kh.member.model.vo.MemberDel;
 
 public class MemberMenu {
 

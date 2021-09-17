@@ -17,7 +17,6 @@ import java.util.Properties;
 import com.kh.member.model.exception.MemberDataNotValidException;
 import com.kh.member.model.exception.MemberException;
 import com.kh.member.model.vo.Member;
-import com.kh.member.model.vo.MemberDel;
 
 public class MemberDao {
 
@@ -108,7 +107,6 @@ public class MemberDao {
 	public List<Member> selectAllMember(Connection conn, boolean isPresent) {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		String sql2 = "select * from member order by reg_date desc";
 		String sql = null;
 		if (isPresent)
 			sql = prop.getProperty("selectAllMember");
@@ -135,7 +133,7 @@ public class MemberDao {
 				member.setRegDate(rset.getTimestamp("REG_DATE"));
 				member.setDelFlag(rset.getString("DEL_FLAG"));
 				member.setDelDate(rset.getTimestamp("DEL_DATE"));
-				
+
 				list.add(member);
 			}
 
@@ -152,7 +150,6 @@ public class MemberDao {
 	public int deleteMember(Connection conn, String id) {
 		PreparedStatement pstmt = null;
 		int result = 0;
-		String sql2 = "delete from member where id = ?";
 		String sql = prop.getProperty("deleteMember");
 
 		try {
@@ -171,7 +168,6 @@ public class MemberDao {
 	public int updateMember(Connection conn, String id, String colName, String newValue) {
 		PreparedStatement pstmt = null;
 		int result = 0;
-		String sql2 = "update member set ! = ? where id = ?";
 		String sql = prop.getProperty("updateMember");
 
 		try {
@@ -193,7 +189,6 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		Member member = null;
-		String sql2 = "select * from member where id = ?";
 		String sql = prop.getProperty("selectOneMember");
 
 		try {
